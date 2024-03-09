@@ -1,0 +1,4 @@
+name: JRPG_DamageIndicator
+version: '${version}'
+main: com.skuralll.jrpg_damageindicator.JRPGDamageIndicator
+api-version: '1.20'
