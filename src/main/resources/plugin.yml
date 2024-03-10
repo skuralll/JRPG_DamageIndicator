@@ -1,4 +1,6 @@
-name: JRPG_DamageIndicator
-version: '${version}'
+name: ${rootProject.name}
+version: ${rootProject.version}
 main: com.skuralll.jrpg_damageindicator.JRPGDamageIndicator
 api-version: '1.20'
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:1.9.22
