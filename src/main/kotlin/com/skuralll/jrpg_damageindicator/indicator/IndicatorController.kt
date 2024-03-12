@@ -18,14 +18,12 @@ class IndicatorController(private val plugin: JRPGDamageIndicator, private val p
     init{
         // update indicators
         Bukkit.getScheduler().runTaskTimer(plugin, Runnable {
-            val despawns = mutableListOf<Int>()
-            indicators.forEach  { (_, indicator) ->
-                indicator.update()
-                if(!indicator.alive){
-                    despawns.add(indicator.entityId)
+            indicators.keys.toList().forEach { entityId ->
+                indicators[entityId]?.update()
+                if(!indicators[entityId]!!.alive){
+                    despawn(entityId)
                 }
             }
-            despawns.forEach { despawn(it) }
         }, 0, 1)
     }
 
