@@ -24,7 +24,7 @@ class EventListener(private val indicatorController: IndicatorController) :Liste
 
         // show indicator
         if (damager == null) return
-        indicatorController.spawn(damager)
+        indicatorController.spawn(damager, entity)
     }
 
 }

@@ -13,7 +13,7 @@ class JRPGDamageIndicator : JavaPlugin() {
     }
     // IndicatorController
     private val indicatorController: IndicatorController by lazy{
-        IndicatorController(protocolManager)
+        IndicatorController(this, protocolManager)
     }
 
     override fun onEnable() {
