@@ -70,7 +70,8 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
             brightness = Display.Brightness(15, 15),
             billboard = Display.Billboard.CENTER,
             textComponent = Component.text("Hello, world!"),
-            backgroundColor = Color.fromARGB(255, 255, 0, 0)
+            backgroundColor = Color.fromARGB(255, 255, 0, 0),
+            textOpacity = 127.toByte()
         ).build()
         packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata).build())
     }

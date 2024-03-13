@@ -1,15 +1,10 @@
 package com.skuralll.jrpg_damageindicator.indicator
 
-import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.ProtocolManager
-import org.bukkit.entity.Player
-import com.comphenix.protocol.wrappers.BlockPosition
-import com.comphenix.protocol.wrappers.WrappedBlockData
 import com.skuralll.jrpg_damageindicator.JRPGDamageIndicator
 import com.skuralll.jrpg_damageindicator.packet.PacketHandler
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 
 class IndicatorController(private val plugin: JRPGDamageIndicator, private val packetHandler: PacketHandler) {

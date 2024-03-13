@@ -13,7 +13,8 @@ class ITextDisplayMetadata(
     var brightness: Brightness? = null,
     var billboard: Billboard? = null,
     var textComponent: Component? = null,
-    var backgroundColor: Color? = null
+    var backgroundColor: Color? = null,
+    var textOpacity: Byte? = null, // 0~127 (-1=fully opaque) (-128~128...?)
 ) : IMetadata() {
 
     override fun build(): List<WrappedDataValue> {
@@ -48,6 +49,11 @@ class ITextDisplayMetadata(
         backgroundColor?.let {
             list.add(
                 WrappedDataValue(25, Registry.get(java.lang.Integer::class.java), backgroundColor!!.asARGB()),
+            )
+        }
+        textOpacity?.let {
+            list.add(
+                WrappedDataValue(26, Registry.get(java.lang.Byte::class.java), textOpacity!!),
             )
         }
         return list
