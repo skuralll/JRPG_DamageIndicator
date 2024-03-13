@@ -12,6 +12,7 @@ import com.skuralll.jrpg_damageindicator.packet.metadata.ITextDisplayMetadata
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketDestroyEntity
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSetEntityMetadata
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSpawnEntity
+import net.kyori.adventure.text.Component
 import org.bukkit.entity.Display
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -27,11 +28,12 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
     // tick count after spawning
     private var tick = AtomicInteger(0)
 
-    // Entity ID
+    // Entity ID counter
     companion object {
         val ENTITY_COUNTER = AtomicInteger(-Random().nextInt())
     }
 
+    // Entity ID
     val entityId = ENTITY_COUNTER.getAndDecrement()
 
     // whether to continue updating
@@ -66,7 +68,7 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
         val metadata = ITextDisplayMetadata(
             brightness = Display.Brightness(15, 15),
             billboard = Display.Billboard.CENTER,
-            textJson = """"This is test""""
+            textComponent = Component.text("Hello, world!")
         ).build()
         packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata).build())
     }

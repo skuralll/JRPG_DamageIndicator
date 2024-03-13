@@ -2,12 +2,13 @@ package com.skuralll.jrpg_damageindicator.packet.metadata
 
 import com.comphenix.protocol.wrappers.WrappedChatComponent
 import com.comphenix.protocol.wrappers.WrappedDataValue
-import com.comphenix.protocol.wrappers.WrappedDataWatcher
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
 import org.bukkit.entity.Display.Billboard
 import org.bukkit.entity.Display.Brightness
 
-class ITextDisplayMetadata(var brightness: Brightness? = null, var billboard: Billboard? = null, var textJson: String? = null) : IMetadata() {
+class ITextDisplayMetadata(var brightness: Brightness? = null, var billboard: Billboard? = null, var textComponent: Component? = null) : IMetadata() {
 
     override fun build(): List<WrappedDataValue> {
         val list = mutableListOf<WrappedDataValue>()
@@ -29,12 +30,12 @@ class ITextDisplayMetadata(var brightness: Brightness? = null, var billboard: Bi
                 WrappedDataValue(16, Registry.get(java.lang.Integer::class.java), lightValue),
             )
         }
-        textJson?.let {
+        textComponent?.let {
             list.add(
                 WrappedDataValue(
                     23,
                     Registry.getChatComponentSerializer(false),
-                    WrappedChatComponent.fromJson(textJson).handle
+                    WrappedChatComponent.fromJson(JSONComponentSerializer.json().serialize(textComponent!!)).handle
                 )
             )
         }
@@ -42,7 +43,3 @@ class ITextDisplayMetadata(var brightness: Brightness? = null, var billboard: Bi
     }
 
 }
-/*
-            val light = (15 shl 4) or (15 shl 4)
-            WrappedDataValue(16, Registry.get(java.lang.Integer::class.java), light),
-* */
