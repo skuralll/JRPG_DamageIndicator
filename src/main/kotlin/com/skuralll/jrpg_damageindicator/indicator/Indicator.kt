@@ -13,6 +13,7 @@ import com.skuralll.jrpg_damageindicator.packet.packets.IPacketDestroyEntity
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSetEntityMetadata
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSpawnEntity
 import net.kyori.adventure.text.Component
+import org.bukkit.Color
 import org.bukkit.entity.Display
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -68,7 +69,8 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
         val metadata = ITextDisplayMetadata(
             brightness = Display.Brightness(15, 15),
             billboard = Display.Billboard.CENTER,
-            textComponent = Component.text("Hello, world!")
+            textComponent = Component.text("Hello, world!"),
+            backgroundColor = Color.fromARGB(255, 255, 0, 0)
         ).build()
         packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata).build())
     }

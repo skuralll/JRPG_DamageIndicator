@@ -5,10 +5,16 @@ import com.comphenix.protocol.wrappers.WrappedDataValue
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
+import org.bukkit.Color
 import org.bukkit.entity.Display.Billboard
 import org.bukkit.entity.Display.Brightness
 
-class ITextDisplayMetadata(var brightness: Brightness? = null, var billboard: Billboard? = null, var textComponent: Component? = null) : IMetadata() {
+class ITextDisplayMetadata(
+    var brightness: Brightness? = null,
+    var billboard: Billboard? = null,
+    var textComponent: Component? = null,
+    var backgroundColor: Color? = null
+) : IMetadata() {
 
     override fun build(): List<WrappedDataValue> {
         val list = mutableListOf<WrappedDataValue>()
@@ -37,6 +43,11 @@ class ITextDisplayMetadata(var brightness: Brightness? = null, var billboard: Bi
                     Registry.getChatComponentSerializer(false),
                     WrappedChatComponent.fromJson(JSONComponentSerializer.json().serialize(textComponent!!)).handle
                 )
+            )
+        }
+        backgroundColor?.let {
+            list.add(
+                WrappedDataValue(25, Registry.get(java.lang.Integer::class.java), backgroundColor!!.asARGB()),
             )
         }
         return list
