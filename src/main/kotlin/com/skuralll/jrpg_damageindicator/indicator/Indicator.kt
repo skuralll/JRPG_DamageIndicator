@@ -12,6 +12,7 @@ import com.skuralll.jrpg_damageindicator.packet.metadata.ITextDisplayMetadata
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketDestroyEntity
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSetEntityMetadata
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSpawnEntity
+import com.skuralll.jrpg_damageindicator.packet.packets.IPacketUpdateEntityPosition
 import net.kyori.adventure.text.Component
 import org.bukkit.Color
 import org.bukkit.entity.Display
@@ -83,13 +84,7 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
 
     // send move packet to client
     private fun sendMovement() {
-        val packet = PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE)
-        packet.integers.write(0, entityId)
-        packet.shorts.write(0, 0.toShort())
-        packet.shorts.write(1, 1000.toShort())
-        packet.shorts.write(2, 0.toShort())
-        packet.booleans.write(0, true)
-        packetHandler.sendPacket(player, packet)
+        packetHandler.sendPacket(player, IPacketUpdateEntityPosition(entityId, this, this.clone().add(Vector(0, 1, 0)), false).build())
     }
 
 }
