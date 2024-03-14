@@ -24,7 +24,11 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 
-class Indicator(private val packetHandler: PacketHandler, private val player: Player, private val vector: Vector) :
+class Indicator(
+    private val packetHandler: PacketHandler,
+    private val player: Player,
+    private val vector: Vector
+) :
     Vector(vector.x, vector.y, vector.z) {
 
     // previous position
@@ -59,7 +63,10 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
 
     // show(spawn) entity on client side
     fun show() {
-        packetHandler.sendPacket(player, IPacketSpawnEntity(entityId, UUID.randomUUID(), EntityType.TEXT_DISPLAY, this).build())
+        packetHandler.sendPacket(
+            player,
+            IPacketSpawnEntity(entityId, UUID.randomUUID(), EntityType.TEXT_DISPLAY, this).build()
+        )
         updateMetadata()
     }
 
@@ -73,10 +80,11 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
         // update process
         when {
             (now <= 20) -> TODO("Not yet implemented")
-            (now <= 40) -> {
-                metadata.textOpacity = ((now - 20)*(127/20)).toByte()
-                player.sendMessage("opacity: ${metadata.textOpacity}")
+            (now < 276) -> {
+                metadata.textOpacity = ITextDisplayMetadata.alphaToByte(now - 20)
+                metadata.textComponent = Component.text("${metadata.textOpacity!!.toByte()}")
             }
+
             else -> _alive = false
         }
         updatePosition()
@@ -91,7 +99,10 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
     // update metadata and send packet to client
     private fun updateMetadata() {
         if (prevMetadata != metadata) {
-            packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata.build()).build())
+            packetHandler.sendPacket(
+                player,
+                IPacketSetEntityMetadata(entityId, metadata.build()).build()
+            )
             prevMetadata = metadata.copy()
         }
     }
@@ -99,7 +110,10 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
     // update position and send packet to client
     private fun updatePosition() {
         if (prevPos != this) {
-            packetHandler.sendPacket(player, IPacketUpdateEntityPosition(entityId, prevPos, this, false).build())
+            packetHandler.sendPacket(
+                player,
+                IPacketUpdateEntityPosition(entityId, prevPos, this, false).build()
+            )
             prevPos = this.vector.clone()
         }
     }

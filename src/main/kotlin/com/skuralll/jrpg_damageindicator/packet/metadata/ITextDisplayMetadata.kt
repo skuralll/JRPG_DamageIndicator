@@ -15,14 +15,32 @@ data class ITextDisplayMetadata(
     var billboard: Billboard? = null,
     var textComponent: Component? = null,
     var backgroundColor: Color? = null,
-    var textOpacity: Byte? = null, // 0~127 (-1=fully opaque) (-128~128...?)
+    var textOpacity: Byte? = null, // -128~127 (-1=fully opaque) (0~26 is transparent) (strong -1->-128 -> 127->26 weak)
 ) : IMetadata() {
+
+    companion object {
+        // convert alpha (0~255) to byte (-128~127)
+        fun alphaToByte(alpha: Int): Byte {
+            val alphaByte = when {
+                alpha < 26 -> 10 // if 0 , it will not be invisible, so set to 10(transparent)
+                alpha <= 127 -> alpha
+                alpha <= 255 -> alpha - 256
+                else -> -1
+            }
+            return alphaByte.toByte()
+        }
+    }
+
 
     override fun build(): List<WrappedDataValue> {
         val list = mutableListOf<WrappedDataValue>()
         posInterpolation?.let {
             list.add(
-                WrappedDataValue(10, Registry.get(java.lang.Integer::class.java), posInterpolation!!),
+                WrappedDataValue(
+                    10,
+                    Registry.get(java.lang.Integer::class.java),
+                    posInterpolation!!
+                ),
             )
         }
         billboard?.let {
@@ -48,13 +66,19 @@ data class ITextDisplayMetadata(
                 WrappedDataValue(
                     23,
                     Registry.getChatComponentSerializer(false),
-                    WrappedChatComponent.fromJson(JSONComponentSerializer.json().serialize(textComponent!!)).handle
+                    WrappedChatComponent.fromJson(
+                        JSONComponentSerializer.json().serialize(textComponent!!)
+                    ).handle
                 )
             )
         }
         backgroundColor?.let {
             list.add(
-                WrappedDataValue(25, Registry.get(java.lang.Integer::class.java), backgroundColor!!.asARGB()),
+                WrappedDataValue(
+                    25,
+                    Registry.get(java.lang.Integer::class.java),
+                    backgroundColor!!.asARGB()
+                ),
             )
         }
         textOpacity?.let {
