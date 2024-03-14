@@ -46,10 +46,21 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
     val alive: Boolean
         get() = _alive
 
+    // Entity metadata
+    private var prevMetadata = ITextDisplayMetadata()
+    var metadata = ITextDisplayMetadata(
+        posInterpolation = 1,
+        brightness = Display.Brightness(15, 15),
+        billboard = Display.Billboard.CENTER,
+        textComponent = Component.text("Hello, world!"),
+        backgroundColor = Color.fromARGB(255, 255, 0, 0),
+        textOpacity = 127.toByte()
+    )
+
     // show(spawn) entity on client side
     fun show() {
         packetHandler.sendPacket(player, IPacketSpawnEntity(entityId, UUID.randomUUID(), EntityType.TEXT_DISPLAY, this).build())
-        sendMetadata()
+        updateMetadata()
     }
 
     fun update() {
@@ -67,6 +78,7 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
             }
         }
         updatePosition()
+        updateMetadata()
     }
 
     // hide(remove) entity on client side
@@ -74,24 +86,21 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
         packetHandler.sendPacket(player, IPacketDestroyEntity(listOf(entityId)).build())
     }
 
-    // send metadata packet to client
-    private fun sendMetadata() {
-        val metadata = ITextDisplayMetadata(
-            posInterpolation = 1,
-            brightness = Display.Brightness(15, 15),
-            billboard = Display.Billboard.CENTER,
-            textComponent = Component.text("Hello, world!"),
-            backgroundColor = Color.fromARGB(255, 255, 0, 0),
-            textOpacity = 127.toByte()
-        ).build()
-        packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata).build())
+    // update metadata and send packet to client
+    private fun updateMetadata() {
+        if (prevMetadata != metadata) {
+            packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata.build()).build())
+            prevMetadata = metadata
+            player.sendMessage("Metadata updated")
+        }
     }
 
-    // send move packet to client
+    // update position and send packet to client
     private fun updatePosition() {
-        if (prevPos == this) return
-        packetHandler.sendPacket(player, IPacketUpdateEntityPosition(entityId, prevPos, this, false).build())
-        prevPos = this.vector.clone()
+        if (prevPos != this) {
+            packetHandler.sendPacket(player, IPacketUpdateEntityPosition(entityId, prevPos, this, false).build())
+            prevPos = this.vector.clone()
+        }
     }
 
 }
