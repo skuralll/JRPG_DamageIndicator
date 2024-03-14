@@ -58,19 +58,15 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
             _alive = false
             return;
         }
-        // update tick
         val now = tick.incrementAndGet()
+        // update process
         when {
             (now > 40) -> _alive = false
             else -> {
                 y += 0.1;
             }
         }
-        // update position
-        if (prevPos != this) {
-            packetHandler.sendPacket(player, IPacketUpdateEntityPosition(entityId, prevPos, this, false).build())
-            prevPos = this.vector.clone()
-        }
+        updatePosition()
     }
 
     // hide(remove) entity on client side
@@ -89,6 +85,13 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
             textOpacity = 127.toByte()
         ).build()
         packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata).build())
+    }
+
+    // send move packet to client
+    private fun updatePosition() {
+        if (prevPos == this) return
+        packetHandler.sendPacket(player, IPacketUpdateEntityPosition(entityId, prevPos, this, false).build())
+        prevPos = this.vector.clone()
     }
 
 }
