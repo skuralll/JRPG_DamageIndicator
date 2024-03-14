@@ -27,6 +27,9 @@ import java.util.concurrent.atomic.AtomicInteger
 class Indicator(private val packetHandler: PacketHandler, private val player: Player, private val vector: Vector) :
     Vector(vector.x, vector.y, vector.z) {
 
+    // previous position
+    private var prevPos = clone()
+
     // tick count after spawning
     private var tick = AtomicInteger(0)
 
@@ -50,17 +53,23 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
     }
 
     fun update() {
+        // kill if player is offline
         if (!player.isOnline) {
             _alive = false
             return;
         }
+        // update tick
         val now = tick.incrementAndGet()
         when {
             (now > 40) -> _alive = false
-            (now % 1 == 0) -> {
-//                y += 0.05
-                sendMovement()
+            else -> {
+                y += 0.1;
             }
+        }
+        // update position
+        if (prevPos != this) {
+            packetHandler.sendPacket(player, IPacketUpdateEntityPosition(entityId, prevPos, this, false).build())
+            prevPos = this.vector.clone()
         }
     }
 
@@ -80,11 +89,6 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
             textOpacity = 127.toByte()
         ).build()
         packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata).build())
-    }
-
-    // send move packet to client
-    private fun sendMovement() {
-        packetHandler.sendPacket(player, IPacketUpdateEntityPosition(entityId, this, this.clone().add(Vector(0, 1, 0)), false).build())
     }
 
 }
