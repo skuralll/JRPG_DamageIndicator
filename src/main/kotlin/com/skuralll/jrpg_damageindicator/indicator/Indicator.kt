@@ -91,7 +91,6 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
         if (prevMetadata != metadata) {
             packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata.build()).build())
             prevMetadata = metadata
-            player.sendMessage("Metadata updated")
         }
     }
 
