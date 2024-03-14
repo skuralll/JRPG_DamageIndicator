@@ -10,6 +10,7 @@ import org.bukkit.entity.Display.Billboard
 import org.bukkit.entity.Display.Brightness
 
 class ITextDisplayMetadata(
+    var posInterpolation: Int? = null,
     var brightness: Brightness? = null,
     var billboard: Billboard? = null,
     var textComponent: Component? = null,
@@ -19,6 +20,11 @@ class ITextDisplayMetadata(
 
     override fun build(): List<WrappedDataValue> {
         val list = mutableListOf<WrappedDataValue>()
+        posInterpolation?.let {
+            list.add(
+                WrappedDataValue(10, Registry.get(java.lang.Integer::class.java), posInterpolation!!),
+            )
+        }
         billboard?.let {
             val billboardValue = when (billboard) {
                 Billboard.FIXED -> 0x00.toByte()

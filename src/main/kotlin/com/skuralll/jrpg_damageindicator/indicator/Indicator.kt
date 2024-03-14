@@ -54,9 +54,12 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
             return;
         }
         val now = tick.incrementAndGet()
-        if (now > 40) {
-            _alive = false
-            return
+        when {
+            (now > 40) -> _alive = false
+            (now % 1 == 0) -> {
+//                y += 0.05
+                sendMovement()
+            }
         }
     }
 
@@ -65,8 +68,10 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
         packetHandler.sendPacket(player, IPacketDestroyEntity(listOf(entityId)).build())
     }
 
+    // send metadata packet to client
     private fun sendMetadata() {
         val metadata = ITextDisplayMetadata(
+            posInterpolation = 1,
             brightness = Display.Brightness(15, 15),
             billboard = Display.Billboard.CENTER,
             textComponent = Component.text("Hello, world!"),
@@ -74,6 +79,17 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
             textOpacity = 127.toByte()
         ).build()
         packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata).build())
+    }
+
+    // send move packet to client
+    private fun sendMovement() {
+        val packet = PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE)
+        packet.integers.write(0, entityId)
+        packet.shorts.write(0, 0.toShort())
+        packet.shorts.write(1, 1000.toShort())
+        packet.shorts.write(2, 0.toShort())
+        packet.booleans.write(0, true)
+        packetHandler.sendPacket(player, packet)
     }
 
 }
