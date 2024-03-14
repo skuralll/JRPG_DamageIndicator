@@ -9,7 +9,7 @@ import org.bukkit.Color
 import org.bukkit.entity.Display.Billboard
 import org.bukkit.entity.Display.Brightness
 
-class ITextDisplayMetadata(
+data class ITextDisplayMetadata(
     var posInterpolation: Int? = null,
     var brightness: Brightness? = null,
     var billboard: Billboard? = null,

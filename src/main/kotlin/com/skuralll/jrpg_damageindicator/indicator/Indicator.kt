@@ -52,9 +52,9 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
         posInterpolation = 1,
         brightness = Display.Brightness(15, 15),
         billboard = Display.Billboard.CENTER,
-        textComponent = Component.text("Hello, world!"),
-        backgroundColor = Color.fromARGB(255, 255, 0, 0),
-        textOpacity = 127.toByte()
+        textComponent = Component.text("-10.5"),
+        backgroundColor = Color.fromARGB(0, 0, 0, 0),
+        textOpacity = 0.toByte()
     )
 
     // show(spawn) entity on client side
@@ -72,10 +72,12 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
         val now = tick.incrementAndGet()
         // update process
         when {
-            (now > 40) -> _alive = false
-            else -> {
-                y += 0.1;
+            (now <= 20) -> TODO("Not yet implemented")
+            (now <= 40) -> {
+                metadata.textOpacity = ((now - 20)*(127/20)).toByte()
+                player.sendMessage("opacity: ${metadata.textOpacity}")
             }
+            else -> _alive = false
         }
         updatePosition()
         updateMetadata()
@@ -90,8 +92,7 @@ class Indicator(private val packetHandler: PacketHandler, private val player: Pl
     private fun updateMetadata() {
         if (prevMetadata != metadata) {
             packetHandler.sendPacket(player, IPacketSetEntityMetadata(entityId, metadata.build()).build())
-            prevMetadata = metadata
-            player.sendMessage("Metadata updated")
+            prevMetadata = metadata.copy()
         }
     }
 
