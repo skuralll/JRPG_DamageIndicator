@@ -27,12 +27,12 @@ import java.util.concurrent.atomic.AtomicInteger
 class Indicator(
     private val packetHandler: PacketHandler,
     private val player: Player,
-    private val vector: Vector
+    vector: Vector
 ) :
     Vector(vector.x, vector.y, vector.z) {
 
     // previous position
-    private var prevPos = clone()
+    private var prevPos: Vector = clone()
 
     // tick count after spawning
     private var tick = AtomicInteger(0)
@@ -78,14 +78,16 @@ class Indicator(
         }
         val now = tick.incrementAndGet()
         // update process
-        when {
-            (now <= 20) -> TODO("Not yet implemented")
-            (now < 276) -> {
-                metadata.textOpacity = ITextDisplayMetadata.alphaToByte(now - 20)
-                metadata.textComponent = Component.text("${metadata.textOpacity!!.toByte()}")
+        when (now) {
+            in 1..30 -> {
+                y += 0.1
             }
 
-            else -> _alive = false
+//            in 20..40 -> {
+////                y += 0.1
+//            }
+
+            100 -> _alive = false
         }
         updatePosition()
         updateMetadata()
@@ -109,12 +111,14 @@ class Indicator(
 
     // update position and send packet to client
     private fun updatePosition() {
-        if (prevPos != this) {
+        val currentVector = this.clone()
+        if (prevPos != currentVector) {
             packetHandler.sendPacket(
                 player,
                 IPacketUpdateEntityPosition(entityId, prevPos, this, false).build()
             )
-            prevPos = this.vector.clone()
+            prevPos = currentVector
+            player.sendMessage("${tick.get()} : ${this.y}")
         }
     }
 
