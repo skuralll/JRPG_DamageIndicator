@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.WrappedDataValue
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry
 import com.skuralll.jrpg_damageindicator.packet.PacketHandler
 import com.skuralll.jrpg_damageindicator.packet.metadata.ITextDisplayMetadata
+import com.skuralll.jrpg_damageindicator.packet.metadata.ITextDisplayMetadata.Companion.alphaToByte
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketDestroyEntity
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSetEntityMetadata
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSpawnEntity
@@ -22,7 +23,6 @@ import org.bukkit.util.Vector
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
-
 
 class Indicator(
     private val packetHandler: PacketHandler,
@@ -58,7 +58,7 @@ class Indicator(
         billboard = Display.Billboard.CENTER,
         textComponent = Component.text("-10.5"),
         backgroundColor = Color.fromARGB(0, 0, 0, 0),
-        textOpacity = 0.toByte()
+        textOpacity = alphaToByte(255)
     )
 
     // show(spawn) entity on client side
@@ -79,18 +79,26 @@ class Indicator(
         val now = tick.incrementAndGet()
         // update process
         when (now) {
-            in 1..30 -> {
-                y += 0.1
+            in 1..3 -> {
+                y += 0.015
+                metadata.textOpacity = alphaToByte(now * 85)
+                metadata.backgroundColor = Color.fromARGB(20 * now, 0, 0, 0)
             }
 
-//            in 20..40 -> {
-////                y += 0.1
-//            }
+            20 -> {
+                y += 1
+                metadata.posInterpolation = 3
+            }
 
-            100 -> _alive = false
+            in 21..23 -> {
+                metadata.textOpacity = alphaToByte(255 - (now - 20) * 85)
+                metadata.backgroundColor = Color.fromARGB(60 - (now - 20) * 20, 0, 0, 0)
+            }
+
+            25 -> _alive = false
         }
-        updatePosition()
         updateMetadata()
+        updatePosition()
     }
 
     // hide(remove) entity on client side
