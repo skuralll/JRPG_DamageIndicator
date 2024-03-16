@@ -7,9 +7,13 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 
-class IndicatorController(private val plugin: JRPGDamageIndicator, private val packetHandler: PacketHandler) {
+class IndicatorController(
+    private val plugin: JRPGDamageIndicator,
+    private val packetHandler: PacketHandler
+) {
 
-    private var indicators = mutableMapOf<Int, Indicator>() // use hash map. because to avoid ConcurrentModificationException
+    private var indicators =
+        mutableMapOf<Int, Indicator>() // use hash map. because to avoid ConcurrentModificationException
 
     init {
         // update indicators
@@ -24,8 +28,14 @@ class IndicatorController(private val plugin: JRPGDamageIndicator, private val p
     }
 
     // spawn indicator
-    fun spawn(damager: Player, target: Entity) {
-        val indicator = Indicator(packetHandler, damager, target.location.toVector().add(Vector(0.0, 1.0, 0.0)))
+    fun spawn(damager: Player, target: Entity, damage: Double) {
+        val indicator =
+            Indicator(
+                packetHandler,
+                damager,
+                target.location.toVector().add(Vector(0.0, 1.0, 0.0)),
+                damage
+            )
         indicators[indicator.entityId] = indicator
         indicator.show()
     }

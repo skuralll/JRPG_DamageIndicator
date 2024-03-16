@@ -27,7 +27,8 @@ import java.util.concurrent.atomic.AtomicInteger
 class Indicator(
     private val packetHandler: PacketHandler,
     private val player: Player,
-    vector: Vector
+    vector: Vector,
+    private val damage: Double
 ) :
     Vector(vector.x, vector.y, vector.z) {
 
@@ -56,7 +57,7 @@ class Indicator(
         posInterpolation = 1,
         brightness = Display.Brightness(15, 15),
         billboard = Display.Billboard.CENTER,
-        textComponent = Component.text("-10.5"),
+        textComponent = Component.text("-$damage"),
         backgroundColor = Color.fromARGB(0, 0, 0, 0),
         textOpacity = alphaToByte(255)
     )

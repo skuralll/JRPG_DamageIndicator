@@ -8,23 +8,23 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
-class EventListener(private val indicatorController: IndicatorController) :Listener {
+class EventListener(private val indicatorController: IndicatorController) : Listener {
 
     @EventHandler
-    fun onEntityDamageByEntity(event: EntityDamageByEntityEvent){
+    fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
         // check if the entity is a living entity
         val entity = event.entity
-        if(entity !is LivingEntity) return
+        if (entity !is LivingEntity) return
         if (entity is ArmorStand) return
-        var damager : Player? = null
+        var damager: Player? = null
         // by player direct attack
-        if(event.damager is Player){
+        if (event.damager is Player) {
             damager = event.damager as Player
         }
 
         // show indicator
         if (damager == null) return
-        indicatorController.spawn(damager, entity)
+        indicatorController.spawn(damager, entity, event.damage)
     }
 
 }
