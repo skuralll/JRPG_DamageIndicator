@@ -16,6 +16,7 @@ data class ITextDisplayMetadata(
     var textComponent: Component? = null,
     var backgroundColor: Color? = null,
     var textOpacity: Byte? = null, // -128~127 (-1=fully opaque) (0~26 is transparent) (strong -1->-128 -> 127->26 weak)
+    var attributes: Byte? = null,
 ) : IMetadata() {
 
     companion object {
@@ -84,6 +85,11 @@ data class ITextDisplayMetadata(
         textOpacity?.let {
             list.add(
                 WrappedDataValue(26, Registry.get(java.lang.Byte::class.java), textOpacity!!),
+            )
+        }
+        attributes?.let {
+            list.add(
+                WrappedDataValue(27, Registry.get(java.lang.Byte::class.java), attributes!!),
             )
         }
         return list

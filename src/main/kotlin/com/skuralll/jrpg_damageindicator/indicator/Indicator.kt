@@ -59,7 +59,8 @@ class Indicator(
         billboard = Display.Billboard.CENTER,
         textComponent = Component.text("-$damage"),
         backgroundColor = Color.fromARGB(0, 0, 0, 0),
-        textOpacity = alphaToByte(255)
+        textOpacity = alphaToByte(255),
+        attributes = 0x02.toByte()
     )
 
     // show(spawn) entity on client side

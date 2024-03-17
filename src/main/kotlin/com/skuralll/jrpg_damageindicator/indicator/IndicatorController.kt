@@ -12,6 +12,11 @@ class IndicatorController(
     private val packetHandler: PacketHandler
 ) {
 
+    companion object {
+        const val SPAWN_RANGE_XZ = 1.5
+        const val SPAWN_RANGE_Y = 0.5
+    }
+
     private var indicators =
         mutableMapOf<Int, Indicator>() // use hash map. because to avoid ConcurrentModificationException
 
@@ -33,7 +38,7 @@ class IndicatorController(
             Indicator(
                 packetHandler,
                 damager,
-                target.location.toVector().add(Vector(0.0, 1.0, 0.0)),
+                getSpawnVector(target),
                 damage
             )
         indicators[indicator.entityId] = indicator
@@ -50,6 +55,15 @@ class IndicatorController(
 
     private fun despawn(indicator: Indicator) {
         despawn(indicator.entityId)
+    }
+
+    // get spawn vector
+    private fun getSpawnVector(entity: Entity): Vector {
+        val pos = entity.location.toVector()
+        val x = pos.x + SPAWN_RANGE_XZ * (Math.random() - 0.5)
+        val y = entity.boundingBox.centerY + SPAWN_RANGE_Y * (Math.random() - 0.5)
+        val z = pos.z + SPAWN_RANGE_XZ * (Math.random() - 0.5)
+        return Vector(x, y, z)
     }
 
 }
