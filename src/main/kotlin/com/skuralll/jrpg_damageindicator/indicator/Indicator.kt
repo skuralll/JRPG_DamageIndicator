@@ -23,6 +23,7 @@ import org.bukkit.util.Vector
 import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.floor
 
 class Indicator(
     private val packetHandler: PacketHandler,
@@ -57,7 +58,7 @@ class Indicator(
         posInterpolation = 1,
         brightness = Display.Brightness(15, 15),
         billboard = Display.Billboard.CENTER,
-        textComponent = Component.text("-$damage"),
+        textComponent = Component.text("-${floor(damage * 10.0) / 10.0}"),
         backgroundColor = Color.fromARGB(0, 0, 0, 0),
         textOpacity = alphaToByte(255),
         attributes = 0x02.toByte()
