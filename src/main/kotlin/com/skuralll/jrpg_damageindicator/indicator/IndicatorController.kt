@@ -33,12 +33,13 @@ class IndicatorController(
     }
 
     // spawn indicator
-    fun spawn(damager: Player, target: Entity, damage: Double) {
+    fun spawn(damager: Player, target: Entity, type: DamageType, damage: Double) {
         val indicator =
             Indicator(
                 packetHandler,
                 damager,
                 getSpawnVector(target),
+                type,
                 damage
             )
         indicators[indicator.entityId] = indicator

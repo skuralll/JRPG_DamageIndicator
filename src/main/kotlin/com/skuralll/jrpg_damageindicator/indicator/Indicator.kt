@@ -1,12 +1,5 @@
 package com.skuralll.jrpg_damageindicator.indicator
 
-import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.ProtocolLibrary
-import com.comphenix.protocol.ProtocolManager
-import com.comphenix.protocol.events.PacketContainer
-import com.comphenix.protocol.wrappers.WrappedChatComponent
-import com.comphenix.protocol.wrappers.WrappedDataValue
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry
 import com.skuralll.jrpg_damageindicator.packet.PacketHandler
 import com.skuralll.jrpg_damageindicator.packet.metadata.ITextDisplayMetadata
 import com.skuralll.jrpg_damageindicator.packet.metadata.ITextDisplayMetadata.Companion.alphaToByte
@@ -15,21 +8,25 @@ import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSetEntityMetadata
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSpawnEntity
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketUpdateEntityPosition
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Color
 import org.bukkit.entity.Display
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
-import java.lang.reflect.InvocationTargetException
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.floor
+
 
 class Indicator(
     private val packetHandler: PacketHandler,
     private val player: Player,
     vector: Vector,
-    private val damage: Double
+    damageType: DamageType,
+    private val damage: Double,
 ) :
     Vector(vector.x, vector.y, vector.z) {
 
@@ -58,7 +55,7 @@ class Indicator(
         posInterpolation = 1,
         brightness = Display.Brightness(15, 15),
         billboard = Display.Billboard.CENTER,
-        textComponent = Component.text("-${floor(damage * 10.0) / 10.0}"),
+        textComponent = damageType.toTextComponent(damage),
         backgroundColor = Color.fromARGB(0, 0, 0, 0),
         textOpacity = alphaToByte(255),
         attributes = 0x02.toByte()
@@ -129,7 +126,7 @@ class Indicator(
                 IPacketUpdateEntityPosition(entityId, prevPos, this, false).build()
             )
             prevPos = currentVector
-            player.sendMessage("${tick.get()} : ${this.y}")
+//            player.sendMessage("${tick.get()} : ${this.y}")
         }
     }
 

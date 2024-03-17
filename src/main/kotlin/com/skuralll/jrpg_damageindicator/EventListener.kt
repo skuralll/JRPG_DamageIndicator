@@ -1,5 +1,6 @@
 package com.skuralll.jrpg_damageindicator
 
+import com.skuralll.jrpg_damageindicator.indicator.DamageType
 import com.skuralll.jrpg_damageindicator.indicator.IndicatorController
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.LivingEntity
@@ -17,14 +18,19 @@ class EventListener(private val indicatorController: IndicatorController) : List
         if (entity !is LivingEntity) return
         if (entity is ArmorStand) return
         var damager: Player? = null
+        var type: DamageType = DamageType.DIRECT_NORMAL
+
         // by player direct attack
         if (event.damager is Player) {
             damager = event.damager as Player
+            if (event.isCritical) {
+                type = DamageType.DIRECT_CRITICAL
+            }
         }
 
         // show indicator
         if (damager == null) return
-        indicatorController.spawn(damager, entity, event.damage)
+        indicatorController.spawn(damager, entity, type, event.damage)
     }
 
 }
