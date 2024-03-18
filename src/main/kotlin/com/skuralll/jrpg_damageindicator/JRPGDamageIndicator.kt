@@ -22,7 +22,7 @@ class JRPGDamageIndicator : JavaPlugin() {
     }
 
     override fun onEnable() {
-        server.pluginManager.registerEvents(EventListener(indicatorController), this)
+        server.pluginManager.registerEvents(EventListener(this, indicatorController), this)
     }
 
     override fun onDisable() {
