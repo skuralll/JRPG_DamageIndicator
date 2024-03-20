@@ -7,10 +7,6 @@ import com.skuralll.jrpg_damageindicator.packet.packets.IPacketDestroyEntity
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSetEntityMetadata
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketSpawnEntity
 import com.skuralll.jrpg_damageindicator.packet.packets.IPacketUpdateEntityPosition
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextColor
-import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Color
 import org.bukkit.entity.Display
 import org.bukkit.entity.EntityType
@@ -18,7 +14,6 @@ import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.math.floor
 
 
 class Indicator(
@@ -77,7 +72,7 @@ class Indicator(
             return;
         }
         val now = tick.incrementAndGet()
-        // update process
+        // update process (1~3:fade in, 20: set move up, 21~23: fade out, 25: remove entity
         when (now) {
             in 1..3 -> {
                 y += 0.015
@@ -126,7 +121,6 @@ class Indicator(
                 IPacketUpdateEntityPosition(entityId, prevPos, this, false).build()
             )
             prevPos = currentVector
-//            player.sendMessage("${tick.get()} : ${this.y}")
         }
     }
 
