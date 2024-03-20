@@ -109,6 +109,11 @@ class EventListener(
                         }
                     }
                 }
+            } else if (projectile is ThrownPotion) {
+                val potion = projectile as ThrownPotion
+                potion.effects.find { it.type == PotionEffectType.HARM }?.let {
+                    type = DamageType.HARMED_DAMAGE
+                }
             }
         } else if (event.damager is Player) {
             // by player direct attack
