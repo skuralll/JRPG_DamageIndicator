@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.*
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.potion.PotionEffectType
 import org.bukkit.potion.PotionType
 import java.util.*
 
@@ -96,11 +97,16 @@ class EventListener(
                     type = DamageType.TRIDENT_NORMAL
                 } else {
                     type = DamageType.ARROW_NORMAL
-                    if (event.isCritical) {
+                    if (event.isCritical) { // critical
                         type = DamageType.ARROW_CRITICAL
                     }
-                    if (projectile.fireTicks != 0) {
+                    if (projectile.fireTicks != 0) { // fire
                         setEntityMarked(entity, damager, 100, burnedByKey)
+                    }
+                    if (projectile is Arrow) { // effects
+                        if (isPoison(projectile.basePotionType)) {
+                            setEntityMarked(entity, damager, getEffectDuration(projectile.basePotionType, PotionEffectType.POISON), poisonedByKey)
+                        }
                     }
                 }
             }
@@ -198,11 +204,24 @@ class EventListener(
         }, duration.toLong())
     }
 
+    // Effect utilities
+
     private fun isPoison(type: PotionType): Boolean {
         return type == PotionType.POISON || type == PotionType.LONG_POISON || type == PotionType.STRONG_POISON
     }
 
     private fun isHarming(type: PotionType): Boolean {
         return type == PotionType.INSTANT_DAMAGE || type == PotionType.STRONG_HARMING
+    }
+
+    private fun getEffectDuration(
+        potionType: PotionType,
+        potionEffectType: PotionEffectType
+    ): Int {
+        potionType.potionEffects.find { it.type == potionEffectType }
+            ?.let {
+                return it.duration
+            }
+        return 0
     }
 }
