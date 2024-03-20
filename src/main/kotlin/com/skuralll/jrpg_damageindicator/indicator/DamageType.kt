@@ -16,6 +16,7 @@ enum class DamageType(
     ARROW_CRITICAL("\uD83C\uDFF9", TextColor.color(255, 170, 0), TextColor.color(255, 170, 0)),
     TRIDENT_NORMAL("\uD83E\uDDF9", TextColor.color(255, 255, 255), TextColor.color(255, 255, 255)),
     FIRED_TICK("\uD83D\uDD25", TextColor.color(255, 85, 85), TextColor.color(255, 85, 85)),
+    POISON_TICK("\uD83E\uDEE7", TextColor.color(0, 170, 0), TextColor.color(0, 170, 0)),
     FIREWORKS_NORMAL(
         "\uD83C\uDF86",
         TextColor.color(255, 255, 255),

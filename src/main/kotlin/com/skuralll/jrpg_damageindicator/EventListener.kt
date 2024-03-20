@@ -2,21 +2,15 @@ package com.skuralll.jrpg_damageindicator
 
 import com.skuralll.jrpg_damageindicator.indicator.DamageType
 import com.skuralll.jrpg_damageindicator.indicator.IndicatorController
-import org.bukkit.entity.AbstractArrow
-import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.Firework
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
-import org.bukkit.entity.Projectile
-import org.bukkit.entity.Trident
+import org.bukkit.NamespacedKey
+import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment
-import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.*
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.potion.PotionType
 import java.util.*
 
 class EventListener(
@@ -26,6 +20,7 @@ class EventListener(
 
     // NamespacedKeys
     private val burnedByKey = NamespacedKey(plugin, "burned_by")
+    private val poisonedByKey = NamespacedKey(plugin, "poisoned_by")
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onEntityDamage(event: EntityDamageEvent) {
@@ -33,9 +28,23 @@ class EventListener(
         val entity = event.entity
         if (entity !is LivingEntity) return
         val container = entity.persistentDataContainer
-
-        // fire damage
-        if (container.has(burnedByKey) && event.cause == EntityDamageEvent.DamageCause.FIRE_TICK) {
+        // slip damage
+        if (container.has(poisonedByKey) && event.cause == EntityDamageEvent.DamageCause.POISON) {
+            // poison damage
+            val key = entity.persistentDataContainer.get(poisonedByKey, PersistentDataType.STRING)
+            if (key != null) {
+                val damager = plugin.server.getPlayer(UUID.fromString(key))
+                if (damager != null) {
+                    indicatorController.spawn(
+                        damager,
+                        entity,
+                        DamageType.POISON_TICK,
+                        event.finalDamage
+                    )
+                }
+            }
+        } else if (container.has(burnedByKey) && event.cause == EntityDamageEvent.DamageCause.FIRE_TICK) {
+            // fire damage
             val key = entity.persistentDataContainer.get(burnedByKey, PersistentDataType.STRING)
             if (key != null) {
                 val damager = plugin.server.getPlayer(UUID.fromString(key))
@@ -95,6 +104,60 @@ class EventListener(
         indicatorController.spawn(damager, entity, type, event.finalDamage)
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun onPotionSplash(event: PotionSplashEvent) {
+        val shooter = event.potion.shooter
+        if (shooter !is Player) return
+
+        event.potion.effects.find { it.type == org.bukkit.potion.PotionEffectType.POISON }?.let {
+            event.affectedEntities.forEach { entity ->
+                if (entity is LivingEntity) {
+                    setEntityMarked(entity, shooter, it.duration, poisonedByKey)
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun onLingeringPotionSplash(event: LingeringPotionSplashEvent) {
+        val shooter = event.entity.shooter
+        if (shooter !is Player) return
+        if (isPoison(event.areaEffectCloud.basePotionType)) {
+            event.areaEffectCloud.persistentDataContainer.set(
+                poisonedByKey,
+                PersistentDataType.STRING,
+                shooter.uniqueId.toString()
+            )
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun onAreaEffectCloudApply(event: AreaEffectCloudApplyEvent) {
+        val container = event.entity.persistentDataContainer
+        if (!container.has(poisonedByKey)) return
+        val damager = plugin.server.getPlayer(
+            UUID.fromString(
+                container.get(
+                    poisonedByKey,
+                    PersistentDataType.STRING
+                )
+            )
+        ) ?: return
+        event.entity.basePotionType.potionEffects.find { it.type == org.bukkit.potion.PotionEffectType.POISON }
+            ?.let {
+                event.affectedEntities.forEach { entity ->
+                    if (entity is LivingEntity) {
+                        setEntityMarked(
+                            entity,
+                            damager,
+                            it.duration,
+                            poisonedByKey
+                        )
+                    }
+                }
+            }
+    }
+
     // set entity marked by damager (for fired, potion, etc.)
     private fun setEntityMarked(
         entity: LivingEntity,
@@ -110,6 +173,10 @@ class EventListener(
         plugin.server.scheduler.runTaskLater(plugin, Runnable {
             entity.persistentDataContainer.remove(key)
         }, duration.toLong())
+    }
+
+    private fun isPoison(type: PotionType): Boolean {
+        return type == PotionType.POISON || type == PotionType.LONG_POISON || type == PotionType.STRONG_POISON
     }
 
 }
