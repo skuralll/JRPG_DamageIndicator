@@ -17,10 +17,10 @@ enum class DamageType(
     FIRED_TICK("\uD83D\uDD25", TextColor.color(255, 85, 85), TextColor.color(255, 85, 85)),
     POISON_TICK("\uD83E\uDEE7", TextColor.color(0, 170, 0), TextColor.color(0, 170, 0)),
     HARMED_DAMAGE("\uD83D\uDCA5", TextColor.color(170, 0, 0), TextColor.color(170, 0, 0)),
-    FIREWORKS_NORMAL(
-        "\uD83C\uDF86",
-        TextColor.color(255, 255, 255),
-        TextColor.color(255, 255, 255)
+    EXPLOSION(
+        "\uD83D\uDCA3",
+        TextColor.color(170, 170, 170),
+        TextColor.color(170, 170, 170)
     );
 
     // generate text component for indicator

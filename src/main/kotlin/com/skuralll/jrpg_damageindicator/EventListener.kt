@@ -122,7 +122,11 @@ class EventListener(
                 setEntityMarked(entity, damager, 80, burnedByKey)
             }
             if (event.isCritical) {
+                // critical damage
                 type = DamageType.DIRECT_CRITICAL
+            } else if (event.cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
+                // by explosion
+                type = DamageType.EXPLOSION
             }
         }
 
