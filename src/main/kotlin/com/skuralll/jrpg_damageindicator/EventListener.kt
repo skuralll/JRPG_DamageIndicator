@@ -21,6 +21,7 @@ class EventListener(
     // NamespacedKeys
     private val burnedByKey = NamespacedKey(plugin, "burned_by")
     private val poisonedByKey = NamespacedKey(plugin, "poisoned_by")
+    private val harmedByKey = NamespacedKey(plugin, "harmed_by")
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onEntityDamage(event: EntityDamageEvent) {
@@ -69,8 +70,23 @@ class EventListener(
         var damager: Player? = null
         var type: DamageType = DamageType.DIRECT_NORMAL
 
-
-        if (event.damager is Projectile) {
+        if (event.damager is AreaEffectCloud) {
+            // by instance damage by area-effect-cloud
+            val areaEffectCloud = event.damager as AreaEffectCloud
+            if (isHarming(areaEffectCloud.basePotionType)) {
+                if (areaEffectCloud.persistentDataContainer.has(harmedByKey)) {
+                    damager = plugin.server.getPlayer(
+                        UUID.fromString(
+                            areaEffectCloud.persistentDataContainer.get(
+                                harmedByKey,
+                                PersistentDataType.STRING
+                            )
+                        )
+                    )
+                    type = DamageType.HARMED_DAMAGE
+                }
+            }
+        } else if (event.damager is Projectile) {
             // by projectile
             val projectile = event.damager as Projectile
             if (projectile.shooter !is Player) return
@@ -122,9 +138,16 @@ class EventListener(
     fun onLingeringPotionSplash(event: LingeringPotionSplashEvent) {
         val shooter = event.entity.shooter
         if (shooter !is Player) return
-        if (isPoison(event.areaEffectCloud.basePotionType)) {
+        val potionType = event.areaEffectCloud.basePotionType; // todo check all potions effects (not base-effect only)
+        if (isPoison(potionType)) {
             event.areaEffectCloud.persistentDataContainer.set(
                 poisonedByKey,
+                PersistentDataType.STRING,
+                shooter.uniqueId.toString()
+            )
+        } else if (isHarming(potionType)) {
+            event.areaEffectCloud.persistentDataContainer.set(
+                harmedByKey,
                 PersistentDataType.STRING,
                 shooter.uniqueId.toString()
             )
@@ -179,4 +202,7 @@ class EventListener(
         return type == PotionType.POISON || type == PotionType.LONG_POISON || type == PotionType.STRONG_POISON
     }
 
+    private fun isHarming(type: PotionType): Boolean {
+        return type == PotionType.INSTANT_DAMAGE || type == PotionType.STRONG_HARMING
+    }
 }
