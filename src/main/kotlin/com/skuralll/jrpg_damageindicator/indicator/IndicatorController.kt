@@ -36,7 +36,7 @@ class IndicatorController(
     fun spawn(damager: Player, target: Entity, type: DamageType, damage: Double) {
         val indicator =
             Indicator(
-                packetHandler,
+                plugin,
                 damager,
                 getSpawnVector(target),
                 type,
