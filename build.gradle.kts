@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.9.22"
+    id("co.uzzu.dotenv.gradle") version "4.0.0"
 }
 
 group = "com.skuralll"
@@ -42,5 +43,26 @@ tasks {
     create<Jar>("sourceJar") {
         archiveClassifier.set("source")
         from(sourceSets["main"].allSource)
+    }
+}
+
+tasks.register<Copy>("deployPlugin") {
+    dependsOn("build")
+    val jarFile = tasks.named<Jar>("jar").get().archiveFile.get().asFile
+    from(file(jarFile))
+    into(env.DEST_DIR.value)
+    doLast {
+        exec {
+            commandLine(
+                "mcrcon",
+                "-H",
+                env.HOST_IP.value,
+                "-P",
+                env.HOST_PORT.value,
+                "-p",
+                env.PASSWORD.value,
+                "plugman reload ${rootProject.name}"
+            )
+        }
     }
 }
