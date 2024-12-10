@@ -23,8 +23,6 @@ class Indicator(
     Vector(vector.x, vector.y, vector.z) {
 
     companion object {
-        const val POINTER_UPDATE_TICK = 1
-
         // Entity ID counter
         val ENTITY_COUNTER = AtomicInteger(-Random().nextInt())
     }
@@ -37,18 +35,18 @@ class Indicator(
         ) as TextDisplay
 
     init {
-        // set entity properties
+        // set entity initial properties
         entity.let {
             it.isPersistent = false
             it.isVisibleByDefault = false
-            it.interpolationDelay = POINTER_UPDATE_TICK
-            it.interpolationDuration = POINTER_UPDATE_TICK
-            it.teleportDuration = POINTER_UPDATE_TICK
+            it.interpolationDelay = 0
+            it.interpolationDuration = 1
+            it.teleportDuration = 1
             it.brightness = Display.Brightness(15, 15)
             it.billboard = Display.Billboard.CENTER
             it.text(damageType.toTextComponent(damage))
             it.backgroundColor = Color.fromARGB(0, 0, 0, 0)
-            it.textOpacity = alphaToByte(255)
+            it.textOpacity = alphaToByte(0)
             it.isSeeThrough = true
         }
     }
@@ -80,8 +78,11 @@ class Indicator(
                 entity.backgroundColor = Color.fromARGB(20 * now, 0, 0, 0)
             }
 
-            20 -> {
+            19 -> {
                 entity.teleportDuration = 3
+            }
+
+            20 -> {
                 entity.teleport(entity.location.clone().apply { y += 1 })
             }
 
