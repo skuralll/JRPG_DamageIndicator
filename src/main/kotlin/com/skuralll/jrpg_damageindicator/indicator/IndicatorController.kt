@@ -24,8 +24,9 @@ class IndicatorController(
         // update indicators
         Bukkit.getScheduler().runTaskTimer(plugin, Runnable {
             indicators.keys.toList().forEach { entityId ->
+                println(entityId)
                 indicators[entityId]?.update()
-                if (!indicators[entityId]!!.alive) {
+                if (!indicators[entityId]!!.isAlive()) {
                     despawn(entityId)
                 }
             }
@@ -43,13 +44,13 @@ class IndicatorController(
                 damage
             )
         indicators[indicator.entityId] = indicator
-        indicator.show()
+        indicator.spawn()
     }
 
     // despawn indicator
     private fun despawn(entityId: Int) {
         if (indicators.containsKey(entityId)) {
-            indicators[entityId]?.hide()
+            indicators[entityId]?.despawn()
             indicators.remove(entityId)
         }
     }
