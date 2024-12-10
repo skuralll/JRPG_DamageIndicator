@@ -2,6 +2,5 @@ name: ${rootProject.name}
 version: ${version}
 main: com.skuralll.jrpg_damageindicator.JRPGDamageIndicator
 api-version: '1.20'
-depend: [ ProtocolLib ]
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.9.22

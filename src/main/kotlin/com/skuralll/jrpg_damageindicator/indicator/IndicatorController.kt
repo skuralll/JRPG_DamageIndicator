@@ -1,15 +1,13 @@
 package com.skuralll.jrpg_damageindicator.indicator
 
 import com.skuralll.jrpg_damageindicator.JRPGDamageIndicator
-import com.skuralll.jrpg_damageindicator.packet.PacketHandler
 import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 
 class IndicatorController(
-    private val plugin: JRPGDamageIndicator,
-    private val packetHandler: PacketHandler
+    private val plugin: JRPGDamageIndicator
 ) {
 
     companion object {
@@ -24,7 +22,6 @@ class IndicatorController(
         // update indicators
         Bukkit.getScheduler().runTaskTimer(plugin, Runnable {
             indicators.keys.toList().forEach { entityId ->
-                println(entityId)
                 indicators[entityId]?.update()
                 if (!indicators[entityId]!!.isAlive()) {
                     despawn(entityId)

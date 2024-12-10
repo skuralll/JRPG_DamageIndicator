@@ -1,6 +1,5 @@
 package com.skuralll.jrpg_damageindicator.indicator
 
-import com.skuralll.jrpg_damageindicator.packet.metadata.ITextDisplayMetadata.Companion.alphaToByte
 import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.entity.Display
@@ -73,7 +72,7 @@ class Indicator(
         // TODO : make it configurable
         when (now) {
             in 1..3 -> {
-                entity.teleport(entity.location.clone().apply { y += 0.015 })
+                entity.teleport(entity.location.clone().apply { y += 0.02 })
                 entity.textOpacity = alphaToByte(now * 85)
                 entity.backgroundColor = Color.fromARGB(20 * now, 0, 0, 0)
             }
@@ -103,6 +102,16 @@ class Indicator(
     // check if entity is alive
     fun isAlive(): Boolean {
         return !entity.isDead
+    }
+
+    private fun alphaToByte(alpha: Int): Byte {
+        val alphaByte = when {
+            alpha < 26 -> 10 // if 0 , it will not be invisible, so set to 10(transparent)
+            alpha <= 127 -> alpha
+            alpha <= 255 -> alpha - 256
+            else -> -1
+        }
+        return alphaByte.toByte()
     }
 
 }

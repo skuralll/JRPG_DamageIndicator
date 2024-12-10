@@ -4,18 +4,16 @@ plugins {
 }
 
 group = "com.skuralll"
-version = "0.1.1"
+version = "0.2"
 
 repositories {
     mavenCentral()
     maven("https://papermc.io/repo/repository/maven-public/")
-    maven("https://repo.dmulloy2.net/repository/public/")
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 }
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
