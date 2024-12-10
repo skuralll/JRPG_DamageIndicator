@@ -50,7 +50,7 @@ class Indicator(
             it.text(damageType.toTextComponent(damage))
             it.backgroundColor = Color.fromARGB(0, 0, 0, 0)
             it.textOpacity = alphaToByte(255)
-            // attributes = 0x02.toByte()
+            it.isSeeThrough = true
         }
     }
 
