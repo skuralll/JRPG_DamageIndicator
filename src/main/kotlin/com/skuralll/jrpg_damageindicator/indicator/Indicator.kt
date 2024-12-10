@@ -101,23 +101,22 @@ class Indicator(
         when (now) {
             in 1..3 -> {
                 y += 0.015
-                metadata.textOpacity = alphaToByte(now * 85)
-                metadata.backgroundColor = Color.fromARGB(20 * now, 0, 0, 0)
+                entity.textOpacity = alphaToByte(now * 85)
+                entity.backgroundColor = Color.fromARGB(20 * now, 0, 0, 0)
             }
 
             20 -> {
                 y += 1
-                metadata.posInterpolation = 3
+                entity.interpolationDuration = 3
             }
 
             in 21..23 -> {
-                metadata.textOpacity = alphaToByte(255 - (now - 20) * 85)
-                metadata.backgroundColor = Color.fromARGB(60 - (now - 20) * 20, 0, 0, 0)
+                entity.textOpacity = alphaToByte(255 - (now - 20) * 85)
+                entity.backgroundColor = Color.fromARGB(60 - (now - 20) * 20, 0, 0, 0)
             }
 
             25 -> _alive = false
         }
-        updateMetadata()
         updatePosition()
     }
 
